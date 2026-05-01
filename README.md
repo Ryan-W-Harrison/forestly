@@ -1,26 +1,11 @@
 # forestly <img src="man/figures/logo.png" align="right" width="120" />
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/Merck/forestly/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Merck/forestly/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/Merck/forestly/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Merck/forestly?branch=main)
-[![CRAN status](https://www.r-pkg.org/badges/version/forestly)](https://cran.r-project.org/package=forestly)
-[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/forestly)](https://cran.r-project.org/package=forestly)
-<!-- badges: end -->
-
 ## Installation
 
 The easiest way to get forestly is to install from CRAN:
 
 ```r
 install.packages("forestly")
-```
-
-Alternatively, to use a new feature or get a bug fix,
-you can install the development version of forestly from GitHub:
-
-```r
-# install.packages("remotes")
-remotes::install_github("Merck/forestly")
 ```
 
 ## Overview
@@ -31,10 +16,6 @@ The forestly package creates interactive forest plots for clinical trial analysi
   - Specific adverse events analysis
 - Efficacy analysis (future work)
   - Subgroup analysis
-
-<video src="https://github.com/Merck/forestly/assets/129398183/2a645ac6-86f3-42c8-bcba-1970da916fae" data-canonical-src="https://github.com/Merck/forestly/assets/129398183/2a645ac6-86f3-42c8-bcba-1970da916fae" controls="controls" muted="muted" class="d-block rounded-bottom-2 width-fit" style="max-height:640px;max-width:60%;">
-
-</video>
 
 We assume ADaM datasets are ready for analysis and
 leverage [metalite](https://merck.github.io/metalite/) data structure to define
@@ -81,3 +62,24 @@ The interactive features for safety analysis include:
 
 - Paper: [2023 PHUSE US Connect](https://phuse.s3.eu-central-1.amazonaws.com/Archive/2023/Connect/US/Florida/PAP_DV07.pdf)
 - Talk: [2021 R/Pharma Conference](https://www.youtube.com/watch?v=HICBeSqD6kI)
+
+## Shiny app
+
+This fork includes an isolated Shiny application in `shiny-app/`. The app lets
+users upload an AE-style dataset, map required variables, preview the data, and
+generate an interactive forestly plot without modifying the upstream package
+source.
+
+Run it locally from the repository root:
+
+```r
+shiny::runApp("shiny-app")
+```
+
+For Posit Connect deployment, use `shiny-app/` as the deployable unit. From that
+directory, restore or snapshot dependencies with `renv` if used, then create a
+manifest with:
+
+```r
+rsconnect::writeManifest()
+```
