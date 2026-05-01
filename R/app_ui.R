@@ -10,10 +10,12 @@ app_ui <- function(request = NULL) {
     bslib::layout_columns(
       col_widths = c(12),
       bslib::card(
+        full_screen = TRUE,
         bslib::card_header("Dataset preview"),
         mod_preview_ui("preview")
       ),
       bslib::card(
+        full_screen = TRUE,
         bslib::card_header("Forest plot"),
         mod_plot_ui("plot")
       )

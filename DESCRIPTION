@@ -27,19 +27,31 @@ LazyData: true
 Depends:
     R (>= 4.1)
 Imports:
+    arrow,
+    bslib,
     brew,
     crosstalk,
+    dplyr,
     glue,
+    golem,
+    haven,
     htmltools,
     metalite,
     metalite.ae,
+    pkgload,
+    purrr,
+    readr,
+    readxl,
     reactable,
     reactR,
     rlang,
+    shiny,
+    stringr,
+    tibble,
+    tidyr,
     ggplot2,
     uuid
 Suggests:
-    dplyr,
     knitr,
     r2rtf,
     rmarkdown,

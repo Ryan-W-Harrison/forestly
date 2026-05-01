@@ -105,15 +105,15 @@ build_forestly_plot <- function(data, mapping) {
     metalite::meta_build()
 
   meta |>
-    forestly::prepare_ae_forestly(
+    prepare_ae_forestly(
       parameter = parameter_term,
       ae_listing_display = c(
         "USUBJID", "SEX", "RACE", "AGE", "ASTDY", "AESEV",
         "AESER", "AEREL", "AEACN", "AEOUT", "SITEID", "ADURN", "ADURU"
       )
     ) |>
-    forestly::format_ae_forestly() |>
-    forestly::ae_forestly(width = 1200)
+    format_ae_forestly() |>
+    ae_forestly(width = 1200)
 }
 
 build_parameter_term <- function(parameters) {

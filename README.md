@@ -65,20 +65,25 @@ The interactive features for safety analysis include:
 
 ## Shiny app
 
-This fork includes an isolated Shiny application in `shiny-app/`. The app lets
-users upload an AE-style dataset, map required variables, preview the data, and
-generate an interactive forestly plot without modifying the upstream package
-source.
+This fork is structured as a golem Shiny app package. The app lets users upload
+an AE-style dataset, map required variables, preview the data, and generate an
+interactive forestly plot.
 
 Run it locally from the repository root:
 
 ```r
-shiny::runApp("shiny-app")
+shiny::runApp(".")
 ```
 
-For Posit Connect deployment, use `shiny-app/` as the deployable unit. From that
-directory, restore or snapshot dependencies with `renv` if used, then create a
-manifest with:
+For development, use:
+
+```r
+source("dev/run_dev.R")
+```
+
+For Posit Connect deployment, use the repository root as the deployable unit.
+Restore or snapshot dependencies with `renv` if used, then create a manifest
+with:
 
 ```r
 rsconnect::writeManifest()
