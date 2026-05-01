@@ -142,7 +142,7 @@ plot_dot <- function(
   n_col <- ncol(tbl)
   x <- 1:n_col
   names_col <- names(tbl)
-  names(tbl) <- paste0("x", 1:ncol(tbl))
+  names(tbl) <- paste0("x", seq_len(ncol(tbl)))
 
   # Encode as factor
   if (!is.factor(item)) {
@@ -151,7 +151,7 @@ plot_dot <- function(
 
   # Define display order, make the first item display on the top
   item <- factor(item, levels = rev(levels(item)))
-  names(tbl) <- paste0("x", 1:ncol(tbl))
+  names(tbl) <- paste0("x", seq_len(ncol(tbl)))
   disp_order <- as.numeric(item)
   # Start create ana data frame for creating this panel
   ana <- data.frame(tbl, item = item, y = disp_order)
@@ -181,7 +181,7 @@ plot_dot <- function(
     function(x) {
       row_count <- max(nrow(x[!sum(is.na(x[, 1:n_col])) == n_col, ]), 1)
       x$y <- x$y + rev(nudge_unit(row_count))
-      x$grp_order <- 1:nrow(x)
+      x$grp_order <- seq_len(nrow(x))
       x
     }
   )
@@ -427,7 +427,7 @@ plot_errorbar <- function(
   n_col <- ncol(tbl)
   x <- 1:n_col
   names_col <- names(tbl)
-  names(tbl) <- paste0("x", 1:ncol(tbl))
+  names(tbl) <- paste0("x", seq_len(ncol(tbl)))
 
   # Encode as factor
   if (!is.factor(item)) {
@@ -436,7 +436,7 @@ plot_errorbar <- function(
 
   # Define display order, make the first item display on the top
   item <- factor(item, levels = rev(levels(item)))
-  names(tbl) <- paste0("x", 1:ncol(tbl))
+  names(tbl) <- paste0("x", seq_len(ncol(tbl)))
   disp_order <- as.numeric(item)
   # Start create ana data frame for creating this panel
   ana <- data.frame(tbl, item = item, y = disp_order)
@@ -446,7 +446,7 @@ plot_errorbar <- function(
     function(x) {
       row_count <- max(nrow(x[!sum(is.na(x[, 1:n_col])) == n_col, ]), 1)
       x$y <- x$y + rev(nudge_unit(row_count))
-      x$grp_order <- 1:nrow(x)
+      x$grp_order <- seq_len(nrow(x))
       x
     }
   )
@@ -738,12 +738,12 @@ table_panel <- function(
   }
   # Derive combined columns from n and prop columns
   stats <- lapply(
-    1:length(n_cols),
+    seq_along(n_cols),
     function(x) {
       paste0(tbl[[n_cols[[x]]]], " (", tbl[[prop_cols[[x]]]], ")")
     }
   )
-  stat_cols <- paste0("stat_", 1:length(n_cols))
+  stat_cols <- paste0("stat_", seq_along(n_cols))
   names(stats) <- stat_cols
   tbl <- cbind(tbl, stats)
 
@@ -767,7 +767,7 @@ table_panel <- function(
   n_col <- ncol(tbl)
   x <- 1:n_col
   names_col <- names(tbl)
-  names(tbl) <- paste0("x", 1:ncol(tbl))
+  names(tbl) <- paste0("x", seq_len(ncol(tbl)))
 
   # Encode as factor
   if (!is.factor(item)) {
@@ -993,7 +993,7 @@ background_panel <- function(
   background_alpha = 0.3
 ) {
   # Get levels' number of item as limits displayed on y-axis
-  n <- length(levels(g$data$item))
+  n <- nlevels(g$data$item)
 
   # check_factor(g$data$item)
   # Create tmp to define background color for each row

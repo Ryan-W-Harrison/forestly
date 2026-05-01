@@ -61,10 +61,10 @@ ae_forestly <- function(
 ) {
   # Set filter parameter
   if (!is.null(filter)) {
-    display_filter = TRUE
+    display_filter <- TRUE
     filter <- match.arg(filter, c("prop", "n"))
   } else {
-    display_filter = FALSE
+    display_filter <- FALSE
   }
 
   # Handle filter_range parameter

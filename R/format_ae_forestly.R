@@ -233,7 +233,7 @@ format_ae_forestly <- function(
   }
   fig_diff_color <- fig_prop_color[index_diff]
 
-  iter <- 1:ncol(outdata$diff) - 1
+  iter <- seq_len(ncol(outdata$diff)) - 1
   text <- glue::glue(
     "x[{iter}] + '(' + x_lower[{iter}] + ', ' + x_upper[{iter}] + ')'"
   )
@@ -243,7 +243,7 @@ format_ae_forestly <- function(
     x = names(outdata$diff),
     x_lower = names(outdata$ci_lower),
     x_upper = names(outdata$ci_upper),
-    y = rev(1:ncol(outdata$diff)),
+    y = rev(seq_len(ncol(outdata$diff))),
     xlim = fig_diff_range,
     color = fig_diff_color,
     width = width_fig,

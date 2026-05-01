@@ -92,7 +92,7 @@ prepare_ae_forestly <- function(
     !grepl("\\.pop$", names(data_observation))
   ]
 
-  if (any(!ae_listing_display %in% names(meta$data_observation))) {
+  if (!all(ae_listing_display %in% names(meta$data_observation))) {
     warning(paste0(
       "The variables specified in ae_listing_display should be included in the input dataset. ",
       "Only the variables included in the input dataset will be displayed on AE listing table."
@@ -152,7 +152,7 @@ prepare_ae_forestly <- function(
   })
 
   ae_listing <- data.frame()
-  for (i in 1:length(res)) {
+  for (i in seq_along(res)) {
     if (nrow(res[[i]]$ae_listing) > 0) {
       res[[i]]$ae_listing$param <- res[[i]]$parameter
       ae_listing <- rbind(ae_listing, res[[i]]$ae_listing)
@@ -178,7 +178,7 @@ prepare_ae_forestly <- function(
     tmp <- lapply(res, function(x) {
       x[[name]][x[["order"]] >= 1000]
     })
-    n <- vapply(tmp, length, FUN.VALUE = numeric(1))
+    n <- lengths(tmp)
     tmp <- unlist(tmp)
     attr(tmp, "n") <- n
     tmp
@@ -196,7 +196,7 @@ prepare_ae_forestly <- function(
   parameter_order <- factor(parameter_order, levels = parameters)
 
   # Display message if a specified-parameter is not included
-  if (any(!(parameters %in% unique(parameter_order)))) {
+  if (!all((parameters %in% unique(parameter_order)))) {
     warning(paste0(
       'There is no record for the parameter "',
       parameters[!(parameters %in% unique(parameter_order))],

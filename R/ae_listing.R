@@ -306,7 +306,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
 
   # Adverse event
   res[["Adverse_Event"]] <- propercase(res[[par_var]])
-  res <- res[, !(names(res) == par_var)]
+  res <- res[, names(res) != par_var]
 
   # Duration
   if ("ADURN" %in% toupper(names(res)) & "ADURU" %in% toupper(names(res))) {
@@ -317,7 +317,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     ) # AE duration with unit
 
     if (length(res[["Duration"]]) > 0) {
-      for (i in 1:length(res[["Duration"]])) {
+      for (i in seq_along(res[["Duration"]])) {
         if (is.na(res[["ADURN"]][i])) {
           res[["Duration"]][i] <- ifelse(
             charmatch(toupper(res[["AEOUT"]][i]), "RECOVERING/RESOLVING") > 0 |
@@ -367,7 +367,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   # Action taken
   if ("AEACN" %in% toupper(names(res))) {
     if (length(res[["AEACN"]]) > 0) {
-      for (i in 1:length(res[["AEACN"]])) {
+      for (i in seq_along(res[["AEACN"]])) {
         res[["Action_Taken"]][i] <- switch(
           res[["AEACN"]][i],
           "DOSE NOT CHANGED" = "None",
@@ -387,7 +387,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   # Outcome
   if ("AEOUT" %in% toupper(names(res))) {
     if (length(res[["AEOUT"]]) > 0) {
-      for (i in 1:length(res[["AEOUT"]])) {
+      for (i in seq_along(res[["AEOUT"]])) {
         res[["Outcome"]][i] <- switch(
           res[["AEOUT"]][i],
           "RECOVERED/RESOLVED" = "Resolved",
@@ -411,7 +411,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     res[["Total_Dose_on_Day_of_AE_Onset"]] <- ""
 
     if (length(res[["AEDOSDUR"]]) > 0) {
-      for (i in 1:length(res[["AEDOSDUR"]])) {
+      for (i in seq_along(res[["AEDOSDUR"]])) {
         if (unlist(gregexpr("Y", res[["ymd"]][i])) > 0) {
           val_year <- substring(
             res[["ymd"]][i],
@@ -487,7 +487,7 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     } else {
       res[["Total_Dose_on_Day_of_AE_Onset"]] <- res[["AEDOSDUR"]]
     }
-    res <- res[, !(names(res) == "ymd"), drop = FALSE]
+    res <- res[, names(res) != "ymd", drop = FALSE]
   }
 
   # Customized variable will use label as column header in

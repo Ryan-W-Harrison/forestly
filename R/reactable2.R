@@ -224,7 +224,7 @@ get_label <- function(data) {
 assign_label <- function(data, var = names(data), label = names(data)) {
   # Input checking
   stopifnot(length(var) == length(label))
-  stopifnot(!any(duplicated(var)))
+  stopifnot(!anyDuplicated(var) > 0)
 
   # Check missing label
   name <- names(data)
