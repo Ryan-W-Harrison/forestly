@@ -90,30 +90,36 @@
 #'   path_outtable =  tempfile(fileext = ".rtf")
 #' )
 rtf_static_forestly <- function(
-    outdata,
-    plot_calls,
-    source,
-    parameter = "any", # only one parameter can be selected
-    n_rows = 25,
-    orientation = "portrait",
-    fig_size = c(6, 6),
-    title = c("analysis", "observation", "population"),
-    footnotes = NULL,
-    text_font_size = 9,
-    path_outdata = tempfile(fileext = ".Rdata"),
-    path_outtable = tempfile(fileext = ".rtf")
+  outdata,
+  plot_calls,
+  source,
+  parameter = "any", # only one parameter can be selected
+  n_rows = 25,
+  orientation = "portrait",
+  fig_size = c(6, 6),
+  title = c("analysis", "observation", "population"),
+  footnotes = NULL,
+  text_font_size = 9,
+  path_outdata = tempfile(fileext = ".Rdata"),
+  path_outtable = tempfile(fileext = ".rtf")
 ) {
   # Check if `plot_calls` is a list of function calls
   if (!all(sapply(plot_calls, is.call))) {
     stop("`plot_calls` must be a list of function calls.")
   }
   # Check if `tbl` is specified in each function call
-  if (!all(sapply(plot_calls, function(x){"tbl" %in% as.character(x)}))) {
+  if (
+    !all(sapply(plot_calls, function(x) {
+      "tbl" %in% as.character(x)
+    }))
+  ) {
     stop("`tbl` must be specified in a function call.")
   }
   # Check if `figure_size` is a numeric vector of length 2
   if (!length(fig_size) == 2 | !all(sapply(fig_size, is.numeric))) {
-    message("`fig_size` must be a numeric vector of length 2. Using default value.")
+    message(
+      "`fig_size` must be a numeric vector of length 2. Using default value."
+    )
     fig_size <- c(6, 6)
   }
 
@@ -150,9 +156,18 @@ rtf_static_forestly <- function(
 
     patches <- append(patches, list(patch))
 
-    filename <- file.path(tempdir(), paste0("forestplot_", ceiling((i - 1) / n_rows) + 1, ".png"))
+    filename <- file.path(
+      tempdir(),
+      paste0("forestplot_", ceiling((i - 1) / n_rows) + 1, ".png")
+    )
 
-    grDevices::png(filename = filename, width = fig_size[1], height = fig_size[2], units = "in", res = 300)
+    grDevices::png(
+      filename = filename,
+      width = fig_size[1],
+      height = fig_size[2],
+      units = "in",
+      res = 300
+    )
     print(patch)
     grDevices::dev.off()
 
@@ -164,7 +179,9 @@ rtf_static_forestly <- function(
   outdata$fig <- patches
 
   # Set default title
-  if ("analysis" %in% title | "observation" %in% title | "population" %in% title) {
+  if (
+    "analysis" %in% title | "observation" %in% title | "population" %in% title
+  ) {
     title <- metalite::collect_title(
       outdata$meta,
       outdata$population,
@@ -184,16 +201,12 @@ rtf_static_forestly <- function(
 
   if (!is.null(footnotes)) {
     outdata$rtf <- outdata$rtf |>
-      r2rtf::rtf_footnote(footnotes,
-                          text_font_size = text_font_size
-      )
+      r2rtf::rtf_footnote(footnotes, text_font_size = text_font_size)
   }
 
   if (!is.null(source)) {
     outdata$rtf <- outdata$rtf |>
-      r2rtf::rtf_source(source,
-                        text_font_size = text_font_size
-      )
+      r2rtf::rtf_source(source, text_font_size = text_font_size)
   }
 
   # Prepare output

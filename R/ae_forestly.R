@@ -47,16 +47,18 @@
 #'     format_ae_forestly() |>
 #'     ae_forestly()
 #' }
-ae_forestly <- function(outdata,
-                        display_soc_toggle = TRUE,
-                        display_diff_toggle = FALSE,
-                        filter = c("prop", "n"),
-                        filter_label = NULL,
-                        filter_range = NULL,
-                        ae_label = NULL,
-                        width = 1400,
-                        max_page = NULL,
-                        dowload_button = FALSE) {
+ae_forestly <- function(
+  outdata,
+  display_soc_toggle = TRUE,
+  display_diff_toggle = FALSE,
+  filter = c("prop", "n"),
+  filter_label = NULL,
+  filter_range = NULL,
+  ae_label = NULL,
+  width = 1400,
+  max_page = NULL,
+  dowload_button = FALSE
+) {
   # Set filter parameter
   if (!is.null(filter)) {
     display_filter = TRUE
@@ -76,7 +78,9 @@ ae_forestly <- function(outdata,
         # Use as provided
         filter_range <- filter_range
       } else {
-        stop("filter_range must be NULL, a single numeric value, or a numeric vector of length 2")
+        stop(
+          "filter_range must be NULL, a single numeric value, or a numeric vector of length 2"
+        )
       }
     } else {
       # Auto-detect range from data
@@ -102,33 +106,53 @@ ae_forestly <- function(outdata,
   }
 
   if (is.null(filter_label)) {
-    filter_label <- ifelse(filter == "prop",
-                           "Incidence (%) in One or More Treatment Groups",
-                           "Number of AE in One or More Treatment Groups"
+    filter_label <- ifelse(
+      filter == "prop",
+      "Incidence (%) in One or More Treatment Groups",
+      "Number of AE in One or More Treatment Groups"
     )
   }
 
   # `max_page` controls the maximum page number displayed in the interactive forest table.
   # By default (`NULL`), it will display the counts that round up to the nearest hundred.
   if (is.null(max_page)) {
-    max_page <- if (max(attr(outdata$tbl$name, "n")) <= 100) c(10, 25, 50, 100) else c(10, 25, 50, 100, ceiling(max(attr(outdata$tbl$name, "n")) / 100) * 100)
+    max_page <- if (max(attr(outdata$tbl$name, "n")) <= 100) {
+      c(10, 25, 50, 100)
+    } else {
+      c(10, 25, 50, 100, ceiling(max(attr(outdata$tbl$name, "n")) / 100) * 100)
+    }
   } else {
-    max_page <- if (max_page <= 100) c(10, 25, 50, 100) else c(10, 25, 50, 100, max_page)
+    max_page <- if (max_page <= 100) {
+      c(10, 25, 50, 100)
+    } else {
+      c(10, 25, 50, 100, max_page)
+    }
   }
 
   parameters <- unlist(strsplit(outdata$parameter, ";"))
-  par_label <- vapply(parameters,
-                      function(x) metalite::collect_adam_mapping(outdata$meta, x)$label,
-                      FUN.VALUE = character(1)
+  par_label <- vapply(
+    parameters,
+    function(x) metalite::collect_adam_mapping(outdata$meta, x)$label,
+    FUN.VALUE = character(1)
   )
 
-  for (par in parameters[(!(parameters %in% unique(outdata$parameter_order)))]) {
+  for (par in parameters[
+    (!(parameters %in% unique(outdata$parameter_order)))
+  ]) {
     outdata$tbl <-
       rbind(outdata$tbl, NA)
-    outdata$tbl$name <- ifelse(is.na(outdata$tbl$name), "No data to display", outdata$tbl$name)
+    outdata$tbl$name <- ifelse(
+      is.na(outdata$tbl$name),
+      "No data to display",
+      outdata$tbl$name
+    )
     outdata$tbl$parameter <-
       factor(
-        ifelse(is.na(outdata$tbl$parameter), par, as.character(outdata$tbl$parameter)),
+        ifelse(
+          is.na(outdata$tbl$parameter),
+          par,
+          as.character(outdata$tbl$parameter)
+        ),
         levels(outdata$parameter_order)
       )
   }
@@ -205,10 +229,13 @@ ae_forestly <- function(outdata,
   )
 
   all_diff_cols <- c(diff_cols, "diff_fig")
-  displayed_diff_cols <- intersect(all_diff_cols, c(
-    if ("diff" %in% outdata$display) diff_cols else NULL,
-    if ("fig_diff" %in% outdata$display) "diff_fig" else NULL
-  ))
+  displayed_diff_cols <- intersect(
+    all_diff_cols,
+    c(
+      if ("diff" %in% outdata$display) diff_cols else NULL,
+      if ("fig_diff" %in% outdata$display) "diff_fig" else NULL
+    )
+  )
 
   hidden_cols <- outdata$hidden_column
   if (display_diff_toggle) {
@@ -233,9 +260,9 @@ ae_forestly <- function(outdata,
       t_details <- subset(
         outdata$ae_listing,
         ((toupper(outdata$ae_listing$Adverse_Event) %in% toupper(t_row)) &
-           (outdata$ae_listing$param == t_param)) |
+          (outdata$ae_listing$param == t_param)) |
           ((toupper(outdata$ae_listing$SOC_Name) %in% toupper(t_row)) &
-             (outdata$ae_listing$param == t_param))
+            (outdata$ae_listing$param == t_param))
       )
 
       # Exclude 'param' column from t_details
@@ -260,7 +287,11 @@ ae_forestly <- function(outdata,
       col_defs <- stats::setNames(
         lapply(names(t_details), function(name) {
           # Use label from the list
-          label_name <- if (is.null(labels[[name]])) name else labels[[name]][[1]]
+          label_name <- if (is.null(labels[[name]])) {
+            name
+          } else {
+            labels[[name]][[1]]
+          }
           reactable::colDef(
             header = label_name, # Use header instead of name
             cell = function(value) format(value, nsmall = 1),

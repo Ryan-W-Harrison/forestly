@@ -1,7 +1,9 @@
 test_that("propercase() converts character vectors correctly", {
   expect_equal(propercase("MILD"), "Mild")
-  expect_equal(propercase(c("MILD", "MODERATE", "SEVERE")), 
-               c("Mild", "Moderate", "Severe"))
+  expect_equal(
+    propercase(c("MILD", "MODERATE", "SEVERE")),
+    c("Mild", "Moderate", "Severe")
+  )
 })
 
 test_that("propercase() handles factors correctly", {
@@ -12,10 +14,14 @@ test_that("propercase() handles factors correctly", {
 })
 
 test_that("titlecase() converts character vectors correctly", {
-  expect_equal(titlecase("AMERICAN INDIAN OR ALASKA NATIVE"), 
-               "American Indian or Alaska Native")
-  expect_equal(titlecase(c("tHEre is oNe", "tHAt is tWo")),
-               c("There is One", "That is Two"))
+  expect_equal(
+    titlecase("AMERICAN INDIAN OR ALASKA NATIVE"),
+    "American Indian or Alaska Native"
+  )
+  expect_equal(
+    titlecase(c("tHEre is oNe", "tHAt is tWo")),
+    c("There is One", "That is Two")
+  )
 })
 
 test_that("titlecase() handles factors correctly", {

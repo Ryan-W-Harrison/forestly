@@ -22,7 +22,10 @@ mod_mapping_server <- function(id, data) {
   shiny::moduleServer(id, function(input, output, session) {
     output$mapping_controls <- shiny::renderUI({
       df <- data()
-      shiny::validate(shiny::need(!is.null(df), "Upload a dataset before mapping variables."))
+      shiny::validate(shiny::need(
+        !is.null(df),
+        "Upload a dataset before mapping variables."
+      ))
 
       choices <- stats::setNames(names(df), names(df))
       optional_choices <- c("Not available" = "", choices)

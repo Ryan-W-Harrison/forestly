@@ -61,9 +61,6 @@
 #     ) |>
 #     meta_build()
 
-
-
-
 # test_that("output is a list wihch contains dataframe: 'prop', 'diff', 'n_pop', 'ci_lower', 'ci_upper', 'p', 'ae_listing'", {
 # ae_df <- prepare_ae_forestly(meta_example(), "apat", "wk12", "rel", c("soc", "par"), NULL, c('SEX', 'RACE', 'AGE'))
 # expect_true("diff" %in% names(ae_df))

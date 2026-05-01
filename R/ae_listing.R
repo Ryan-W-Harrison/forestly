@@ -33,14 +33,32 @@
 #'
 #' lapply(outdata, head, 10)
 collect_ae_listing <- function(
-    outdata,
-    display = c(
-      "USUBJID", "SEX", "RACE", "AGE", "ASTDY", "AESEV", "AESER",
-      "AEREL", "AEACN", "AEOUT", "SITEID", "ADURN", "ADURU"
-    )) {
-  obs_group <- metalite::collect_adam_mapping(outdata$meta, outdata$observation)$group
+  outdata,
+  display = c(
+    "USUBJID",
+    "SEX",
+    "RACE",
+    "AGE",
+    "ASTDY",
+    "AESEV",
+    "AESER",
+    "AEREL",
+    "AEACN",
+    "AEOUT",
+    "SITEID",
+    "ADURN",
+    "ADURU"
+  )
+) {
+  obs_group <- metalite::collect_adam_mapping(
+    outdata$meta,
+    outdata$observation
+  )$group
   par_var <- metalite::collect_adam_mapping(outdata$meta, outdata$parameter)$var
-  par_var_soc <- metalite::collect_adam_mapping(outdata$meta, outdata$parameter)$soc
+  par_var_soc <- metalite::collect_adam_mapping(
+    outdata$meta,
+    outdata$parameter
+  )$soc
 
   obs <- metalite::collect_observation_record(
     outdata$meta,
@@ -59,7 +77,10 @@ collect_ae_listing <- function(
   outdata$ae_listing <- assign_label(
     data = outdata$ae_listing,
     var = names(outdata$ae_listing),
-    label = listing_label[match(names(outdata$ae_listing), names(listing_label))]
+    label = listing_label[match(
+      names(outdata$ae_listing),
+      names(listing_label)
+    )]
   )
 
   outdata
@@ -82,7 +103,10 @@ collect_ae_listing <- function(
 propercase <- function(x) {
   if (is.factor(x)) {
     # For factors, apply proper case to levels to preserve factor structure
-    levels(x) <- paste0(toupper(substr(levels(x), 1, 1)), tolower(substring(levels(x), 2)))
+    levels(x) <- paste0(
+      toupper(substr(levels(x), 1, 1)),
+      tolower(substring(levels(x), 2))
+    )
     # Return as character to match expected output type
     return(as.character(x))
   } else if (is.character(x)) {
@@ -166,19 +190,61 @@ titlecase <- function(x, lower = TRUE) {
 #' lapply(outdata, head, 20)
 format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   res <- outdata[["ae_listing"]]
-  obs_group <- metalite::collect_adam_mapping(outdata$meta, outdata$observation)$group
+  obs_group <- metalite::collect_adam_mapping(
+    outdata$meta,
+    outdata$observation
+  )$group
   par_var <- metalite::collect_adam_mapping(outdata$meta, outdata$parameter)$var
-  par_var_soc <- metalite::collect_adam_mapping(outdata$meta, outdata$parameter)$soc
+  par_var_soc <- metalite::collect_adam_mapping(
+    outdata$meta,
+    outdata$parameter
+  )$soc
 
   new_name <- c(
-    "SITEID", "SITENUM", "USUBJID", "SUBJID", "SEX", "RACE", "AGE", obs_group, "EPOCH",
-    "ASTDY", par_var, par_var_soc, "ADURN", "AESEV", "AESER", "AEREL", "AREL", "AEACN",
-    "AEOUT", "AEDOSDUR", "ATOXGRN"
+    "SITEID",
+    "SITENUM",
+    "USUBJID",
+    "SUBJID",
+    "SEX",
+    "RACE",
+    "AGE",
+    obs_group,
+    "EPOCH",
+    "ASTDY",
+    par_var,
+    par_var_soc,
+    "ADURN",
+    "AESEV",
+    "AESER",
+    "AEREL",
+    "AREL",
+    "AEACN",
+    "AEOUT",
+    "AEDOSDUR",
+    "ATOXGRN"
   )
   name_mapping <- c(
-    "Site_Number", "Site_Number", "Unique_Participant_ID", "Participant_ID", "Gender", "Race", "Age", "Treatment_Group", "Onset_Epoch",
-    "Relative_Day_of_Onset", "Adverse_Event", "SOC_Name", "Duration", "Intensity", "Serious", "Related", "Related", "Action_Taken",
-    "Outcome", "Total_Dose_on_Day_of_AE_Onset", "Maximum_Toxicity_Grade"
+    "Site_Number",
+    "Site_Number",
+    "Unique_Participant_ID",
+    "Participant_ID",
+    "Gender",
+    "Race",
+    "Age",
+    "Treatment_Group",
+    "Onset_Epoch",
+    "Relative_Day_of_Onset",
+    "Adverse_Event",
+    "SOC_Name",
+    "Duration",
+    "Intensity",
+    "Serious",
+    "Related",
+    "Related",
+    "Action_Taken",
+    "Outcome",
+    "Total_Dose_on_Day_of_AE_Onset",
+    "Maximum_Toxicity_Grade"
   )
   names(name_mapping) <- new_name
 
@@ -188,7 +254,8 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     } else {
       x
     }
-  }) |> unlist()
+  }) |>
+    unlist()
 
   # Site ID
   if ("SITEID" %in% toupper(names(res))) {
@@ -243,7 +310,8 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
 
   # Duration
   if ("ADURN" %in% toupper(names(res)) & "ADURU" %in% toupper(names(res))) {
-    res[["Duration"]] <- paste(ifelse(is.na(res[["ADURN"]]), "", as.character(res[["ADURN"]])),
+    res[["Duration"]] <- paste(
+      ifelse(is.na(res[["ADURN"]]), "", as.character(res[["ADURN"]])),
       tools::toTitleCase(tolower(res[["ADURU"]])),
       sep = " "
     ) # AE duration with unit
@@ -251,9 +319,15 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     if (length(res[["Duration"]]) > 0) {
       for (i in 1:length(res[["Duration"]])) {
         if (is.na(res[["ADURN"]][i])) {
-          res[["Duration"]][i] <- ifelse(charmatch(toupper(res[["AEOUT"]][i]), "RECOVERING/RESOLVING") > 0 |
-            charmatch(toupper(res[["AEOUT"]][i]), "NOT RECOVERED/NOT RESOLVED") > 0,
-          "Continuing", "Unknown"
+          res[["Duration"]][i] <- ifelse(
+            charmatch(toupper(res[["AEOUT"]][i]), "RECOVERING/RESOLVING") > 0 |
+              charmatch(
+                toupper(res[["AEOUT"]][i]),
+                "NOT RECOVERED/NOT RESOLVED"
+              ) >
+                0,
+            "Continuing",
+            "Unknown"
           )
         }
       }
@@ -279,16 +353,23 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
 
   # AE related
   if ("AEREL" %in% toupper(names(res))) {
-    res[["Related"]] <- ifelse(res[["AEREL"]] == "RELATED", "Y", ifelse(
-      toupper(res[["AEREL"]]) == "NOT RELATED", "N", tools::toTitleCase(tolower(res[["AEREL"]]))
-    ))
+    res[["Related"]] <- ifelse(
+      res[["AEREL"]] == "RELATED",
+      "Y",
+      ifelse(
+        toupper(res[["AEREL"]]) == "NOT RELATED",
+        "N",
+        tools::toTitleCase(tolower(res[["AEREL"]]))
+      )
+    )
   }
 
   # Action taken
   if ("AEACN" %in% toupper(names(res))) {
     if (length(res[["AEACN"]]) > 0) {
       for (i in 1:length(res[["AEACN"]])) {
-        res[["Action_Taken"]][i] <- switch(res[["AEACN"]][i],
+        res[["Action_Taken"]][i] <- switch(
+          res[["AEACN"]][i],
           "DOSE NOT CHANGED" = "None",
           "DOSE REDUCED" = "Reduced",
           "DRUG INTERRUPTED" = "Interrupted",
@@ -307,7 +388,8 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   if ("AEOUT" %in% toupper(names(res))) {
     if (length(res[["AEOUT"]]) > 0) {
       for (i in 1:length(res[["AEOUT"]])) {
-        res[["Outcome"]][i] <- switch(res[["AEOUT"]][i],
+        res[["Outcome"]][i] <- switch(
+          res[["AEOUT"]][i],
           "RECOVERED/RESOLVED" = "Resolved",
           "RECOVERING/RESOLVING" = "Resolving",
           "RECOVERED/RESOLVED WITH SEQUELAE" = "Sequelae",
@@ -321,40 +403,84 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   }
   # Total dose on day of AE onset
   if ("AEDOSDUR" %in% toupper(names(res))) {
-    res[["ymd"]] <- substring(res[["AEDOSDUR"]], unlist(gregexpr("/P", res[["AEDOSDUR"]])) + 2)
+    res[["ymd"]] <- substring(
+      res[["AEDOSDUR"]],
+      unlist(gregexpr("/P", res[["AEDOSDUR"]])) + 2
+    )
 
     res[["Total_Dose_on_Day_of_AE_Onset"]] <- ""
 
     if (length(res[["AEDOSDUR"]]) > 0) {
       for (i in 1:length(res[["AEDOSDUR"]])) {
         if (unlist(gregexpr("Y", res[["ymd"]][i])) > 0) {
-          val_year <- substring(res[["ymd"]][i], 1, unlist(gregexpr("Y", res[["ymd"]][i])) - 1)
+          val_year <- substring(
+            res[["ymd"]][i],
+            1,
+            unlist(gregexpr("Y", res[["ymd"]][i])) - 1
+          )
           if (as.numeric(val_year) != 1) {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], val_year, " years")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              val_year,
+              " years"
+            )
           } else {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], "1 year")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              "1 year"
+            )
           }
 
-          res[["ymd"]][i] <- substring(res[["ymd"]][i], unlist(gregexpr("Y", res[["ymd"]][i])) + 1)
+          res[["ymd"]][i] <- substring(
+            res[["ymd"]][i],
+            unlist(gregexpr("Y", res[["ymd"]][i])) + 1
+          )
         }
         if (unlist(gregexpr("M", res[["ymd"]][i])) > 0) {
-          val_month <- substring(res[["ymd"]][i], 1, unlist(gregexpr("M", res[["ymd"]][i])) - 1)
+          val_month <- substring(
+            res[["ymd"]][i],
+            1,
+            unlist(gregexpr("M", res[["ymd"]][i])) - 1
+          )
 
           if (as.numeric(val_month) != 1) {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], " ", val_month, " months")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              " ",
+              val_month,
+              " months"
+            )
           } else {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], " 1 month")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              " 1 month"
+            )
           }
 
-          res[["ymd"]][i] <- substring(res[["ymd"]][i], unlist(gregexpr("M", res[["ymd"]][i])) + 1)
+          res[["ymd"]][i] <- substring(
+            res[["ymd"]][i],
+            unlist(gregexpr("M", res[["ymd"]][i])) + 1
+          )
         }
         if (unlist(gregexpr("D", res[["ymd"]][i])) > 0) {
-          val_day <- substring(res[["ymd"]][i], 1, unlist(gregexpr("D", res[["ymd"]][i])) - 1)
+          val_day <- substring(
+            res[["ymd"]][i],
+            1,
+            unlist(gregexpr("D", res[["ymd"]][i])) - 1
+          )
 
           if (as.numeric(val_day) != 1) {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], " ", val_day, " days")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              " ",
+              val_day,
+              " days"
+            )
           } else {
-            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(res[["Total_Dose_on_Day_of_AE_Onset"]][i], " 1 day")
+            res[["Total_Dose_on_Day_of_AE_Onset"]][i] <- paste0(
+              res[["Total_Dose_on_Day_of_AE_Onset"]][i],
+              " 1 day"
+            )
           }
         }
       }
@@ -363,7 +489,6 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
     }
     res <- res[, !(names(res) == "ymd"), drop = FALSE]
   }
-
 
   # Customized variable will use label as column header in
   # drill down listing on interactive forest plot
@@ -380,7 +505,10 @@ format_ae_listing <- function(outdata, display_unique_records = FALSE) {
   outdata[["ae_listing"]] <- assign_label(
     data = outdata[["ae_listing"]],
     var = names(outdata[["ae_listing"]]),
-    label = listing_label[match(names(outdata[["ae_listing"]]), names(listing_label))]
+    label = listing_label[match(
+      names(outdata[["ae_listing"]]),
+      names(listing_label)
+    )]
   )
 
   outdata

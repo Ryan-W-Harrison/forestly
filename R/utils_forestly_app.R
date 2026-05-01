@@ -3,22 +3,39 @@
 }
 
 build_forestly_plot <- function(data, mapping) {
-  required <- unlist(mapping[c("subject", "treatment", "term", "soc")], use.names = FALSE)
+  required <- unlist(
+    mapping[c("subject", "treatment", "term", "soc")],
+    use.names = FALSE
+  )
   missing_required <- required[is.na(required) | !nzchar(required)]
   if (length(missing_required) > 0) {
-    stop("Subject, treatment, AE term, and system organ class mappings are required.", call. = FALSE)
+    stop(
+      "Subject, treatment, AE term, and system organ class mappings are required.",
+      call. = FALSE
+    )
   }
 
   missing_columns <- setdiff(required, names(data))
   if (length(missing_columns) > 0) {
-    stop("Mapped columns are missing: ", paste(missing_columns, collapse = ", "), call. = FALSE)
+    stop(
+      "Mapped columns are missing: ",
+      paste(missing_columns, collapse = ", "),
+      call. = FALSE
+    )
   }
 
-  optional <- unlist(mapping[c("safety_flag", "serious", "related")], use.names = FALSE)
+  optional <- unlist(
+    mapping[c("safety_flag", "serious", "related")],
+    use.names = FALSE
+  )
   optional <- optional[nzchar(optional)]
   missing_optional <- setdiff(optional, names(data))
   if (length(missing_optional) > 0) {
-    stop("Optional mapped columns are missing: ", paste(missing_optional, collapse = ", "), call. = FALSE)
+    stop(
+      "Optional mapped columns are missing: ",
+      paste(missing_optional, collapse = ", "),
+      call. = FALSE
+    )
   }
 
   safety_flag <- mapped_or_default(data, mapping$safety_flag, "Y")
@@ -57,7 +74,10 @@ build_forestly_plot <- function(data, mapping) {
     )
 
   if (nrow(adae) == 0) {
-    stop("No complete AE records remain after applying the selected mappings.", call. = FALSE)
+    stop(
+      "No complete AE records remain after applying the selected mappings.",
+      call. = FALSE
+    )
   }
 
   treatment_levels <- unique(adae$TRTA)
@@ -81,13 +101,18 @@ build_forestly_plot <- function(data, mapping) {
   parameter_term <- build_parameter_term(mapping$parameters)
 
   meta <- metalite::meta_adam(population = adsl, observation = adae) |>
-    metalite::define_plan(plan = metalite::plan(
-      analysis = "ae_forestly",
-      population = "apat",
-      observation = "apat",
-      parameter = parameter_term
-    )) |>
-    metalite::define_analysis(name = "ae_forestly", label = "Interactive forest plot") |>
+    metalite::define_plan(
+      plan = metalite::plan(
+        analysis = "ae_forestly",
+        population = "apat",
+        observation = "apat",
+        parameter = parameter_term
+      )
+    ) |>
+    metalite::define_analysis(
+      name = "ae_forestly",
+      label = "Interactive forest plot"
+    ) |>
     metalite::define_population(
       name = "apat",
       group = "TRTA",
@@ -108,8 +133,19 @@ build_forestly_plot <- function(data, mapping) {
     prepare_ae_forestly(
       parameter = parameter_term,
       ae_listing_display = c(
-        "USUBJID", "SEX", "RACE", "AGE", "ASTDY", "AESEV",
-        "AESER", "AEREL", "AEACN", "AEOUT", "SITEID", "ADURN", "ADURU"
+        "USUBJID",
+        "SEX",
+        "RACE",
+        "AGE",
+        "ASTDY",
+        "AESEV",
+        "AESER",
+        "AEREL",
+        "AEACN",
+        "AEOUT",
+        "SITEID",
+        "ADURN",
+        "ADURU"
       )
     ) |>
     format_ae_forestly() |>
@@ -155,7 +191,8 @@ add_forestly_parameters <- function(meta, parameters) {
       related_serious = metalite::define_parameter(
         meta,
         name = "related_serious",
-        subset = AESER == "Y" & AEREL %in% c("PROBABLE", "POSSIBLE", "RELATED", "YES", "Y"),
+        subset = AESER == "Y" &
+          AEREL %in% c("PROBABLE", "POSSIBLE", "RELATED", "YES", "Y"),
         label = "Related serious AE",
         var = "AEDECOD",
         soc = "AEBODSYS"
@@ -189,7 +226,8 @@ normalize_related <- function(x) {
   dplyr::case_when(
     value %in% c("Y", "YES", "TRUE", "T", "1", "RELATED") ~ "RELATED",
     value %in% c("PROBABLE", "POSSIBLE") ~ value,
-    value %in% c("N", "NO", "FALSE", "F", "0", "NOT RELATED", "UNRELATED") ~ "NOT RELATED",
+    value %in% c("N", "NO", "FALSE", "F", "0", "NOT RELATED", "UNRELATED") ~
+      "NOT RELATED",
     TRUE ~ value
   )
 }

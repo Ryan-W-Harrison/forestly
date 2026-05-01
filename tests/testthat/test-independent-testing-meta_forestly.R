@@ -40,7 +40,10 @@ test_that("There is 1 observation: trtem", {
 
 test_that("There is 1 observation subset criteria: TREMTFL == Y & TRTFL == Y", {
   test2 <- test_meta_forestly_2()
-  expect_equal(test2$observation$trtem$subset, quote(TRTEMFL == "Y" & TRTFL == "Y"))
+  expect_equal(
+    test2$observation$trtem$subset,
+    quote(TRTEMFL == "Y" & TRTFL == "Y")
+  )
 })
 
 test_that("There are 2 observations: any, g35", {

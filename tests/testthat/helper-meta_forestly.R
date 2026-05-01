@@ -18,7 +18,8 @@ test_meta_forestly_2 <- function() {
   adae <- r2rtf::r2rtf_adae
 
   meta_forestly(
-    adsl, adae,
+    adsl,
+    adae,
     population_term = "trt",
     population_subset = TRTFL == "Y",
     observation_term = "trtem",

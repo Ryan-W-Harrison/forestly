@@ -85,25 +85,28 @@
 #' meta_any |>
 #'   plot_dot("name", prop_cols = c("prop_1", "prop_2"), label = c("Treatment", "Placebo"))
 plot_dot <- function(
-    tbl,
-    prop_cols = c("prop_1", "prop_2"),
-    y_var,
-    label,
-    x_breaks = NULL,
-    color = NULL,
-    shape = NULL,
-    title = "AE (%)",
-    background_color = c("#69B8F7", "#FFFFFF"),
-    background_alpha = 0.3,
-    theme = theme_panel(show_text = TRUE, show_ticks = TRUE),
-    legend_nrow = 1) {
+  tbl,
+  prop_cols = c("prop_1", "prop_2"),
+  y_var,
+  label,
+  x_breaks = NULL,
+  color = NULL,
+  shape = NULL,
+  title = "AE (%)",
+  background_color = c("#69B8F7", "#FFFFFF"),
+  background_alpha = 0.3,
+  theme = theme_panel(show_text = TRUE, show_ticks = TRUE),
+  legend_nrow = 1
+) {
   # Choose columns to use in tbl
   tbl <- tbl[, c(y_var, prop_cols)]
 
   # Define variable index
   y_id <- which(names(tbl) %in% y_var)
 
-  if (length(y_id) != 1) stop("`y_var` is not uniquely defined in `tbl`.")
+  if (length(y_id) != 1) {
+    stop("`y_var` is not uniquely defined in `tbl`.")
+  }
 
   # Define item variable for y-axis label
   item <- tbl[[y_var]]
@@ -117,7 +120,9 @@ plot_dot <- function(
     if (n_trt <= 2) {
       color <- c("#00857C", "#66203A")
     } else {
-      if (n_trt > 3) stop("Must define color to display groups.")
+      if (n_trt > 3) {
+        stop("Must define color to display groups.")
+      }
       color <- c("#66203A", rev(c("#00857C", "#6ECEB2", "#BFED33")[1:n_trt]))
     }
   }
@@ -140,7 +145,9 @@ plot_dot <- function(
   names(tbl) <- paste0("x", 1:ncol(tbl))
 
   # Encode as factor
-  if (!is.factor(item)) item <- factor(item, levels = unique(item))
+  if (!is.factor(item)) {
+    item <- factor(item, levels = unique(item))
+  }
 
   # Define display order, make the first item display on the top
   item <- factor(item, levels = rev(levels(item)))
@@ -166,7 +173,8 @@ plot_dot <- function(
     times = c(names(tbl)),
     timevar = "name",
     direction = "long"
-  ) |> unique.data.frame()
+  ) |>
+    unique.data.frame()
 
   ana <- lapply(
     split(ana, ana$y),
@@ -200,15 +208,18 @@ plot_dot <- function(
     background_alpha = background_alpha
   )
   # Create scatter plot for this panel
-  g <- g + ggplot2::geom_point(
-    data = ana, ggplot2::aes(
-      x = .data[["value"]],
-      y = .data[["y"]],
-      color = .data[["grp_order"]],
-      shape = .data[["grp_order"]]
-    ),
-    size = 2, show.legend = legend_flag
-  ) +
+  g <- g +
+    ggplot2::geom_point(
+      data = ana,
+      ggplot2::aes(
+        x = .data[["value"]],
+        y = .data[["y"]],
+        color = .data[["grp_order"]],
+        shape = .data[["grp_order"]]
+      ),
+      size = 2,
+      show.legend = legend_flag
+    ) +
     ggplot2::xlab(NULL) +
     ggplot2::ylab(NULL) +
     ggplot2::scale_y_discrete(limits = levels(ana[["item"]]))
@@ -268,12 +279,15 @@ plot_dot <- function(
   # Control legend display of the output plot
   if (!is.null(legend_nrow)) {
     if (legend_nrow > length(label)) {
-      stop("The number of legend rows can't be larger than the number of treatment groups.")
+      stop(
+        "The number of legend rows can't be larger than the number of treatment groups."
+      )
     }
-    g <- g + ggplot2::guides(
-      color = ggplot2::guide_legend(nrow = legend_nrow),
-      shape = ggplot2::guide_legend(nrow = legend_nrow)
-    )
+    g <- g +
+      ggplot2::guides(
+        color = ggplot2::guide_legend(nrow = legend_nrow),
+        shape = ggplot2::guide_legend(nrow = legend_nrow)
+      )
   }
   g + theme
 }
@@ -350,30 +364,33 @@ plot_dot <- function(
 #'     label = c("Treatment", "Placebo")
 #'   )
 plot_errorbar <- function(
-    tbl,
-    ci_cols = c("diff_1", "lower_1", "upper_1"),
-    y_var,
-    errbar_width = 0.4,
-    color = NULL,
-    shape = NULL,
-    label,
-    x_breaks = NULL,
-    grp_abbrev = "paired",
-    favor_direction = "negative",
-    vline = NULL,
-    line_type = 1,
-    title = "Risk Diff. + 95% CI \n (Percentage Points)",
-    background_color = c("#69B8F7", "#FFFFFF"),
-    background_alpha = 0.3,
-    theme = theme_panel(show_text = TRUE, show_ticks = TRUE),
-    legend_nrow = 1) {
+  tbl,
+  ci_cols = c("diff_1", "lower_1", "upper_1"),
+  y_var,
+  errbar_width = 0.4,
+  color = NULL,
+  shape = NULL,
+  label,
+  x_breaks = NULL,
+  grp_abbrev = "paired",
+  favor_direction = "negative",
+  vline = NULL,
+  line_type = 1,
+  title = "Risk Diff. + 95% CI \n (Percentage Points)",
+  background_color = c("#69B8F7", "#FFFFFF"),
+  background_alpha = 0.3,
+  theme = theme_panel(show_text = TRUE, show_ticks = TRUE),
+  legend_nrow = 1
+) {
   # Choose columns to use in tbl
   tbl <- tbl[, c(y_var, ci_cols)]
 
   # Define variable index
   y_id <- which(names(tbl) %in% y_var)
 
-  if (length(y_id) != 1) stop("`y_var` is not uniquely defined in `tbl`.")
+  if (length(y_id) != 1) {
+    stop("`y_var` is not uniquely defined in `tbl`.")
+  }
 
   # Define item variable for y-axis label
   item <- tbl[[y_var]]
@@ -391,7 +408,9 @@ plot_errorbar <- function(
     if (n_trt <= 2) {
       color <- c("#00857C", "#66203A")
     } else {
-      if (n_trt > 3) stop("Must define color to display groups.")
+      if (n_trt > 3) {
+        stop("Must define color to display groups.")
+      }
       color <- c("#66203A", rev(c("#00857C", "#6ECEB2", "#BFED33")[1:n_trt]))
     }
   }
@@ -411,7 +430,9 @@ plot_errorbar <- function(
   names(tbl) <- paste0("x", 1:ncol(tbl))
 
   # Encode as factor
-  if (!is.factor(item)) item <- factor(item, levels = unique(item))
+  if (!is.factor(item)) {
+    item <- factor(item, levels = unique(item))
+  }
 
   # Define display order, make the first item display on the top
   item <- factor(item, levels = rev(levels(item)))
@@ -525,8 +546,13 @@ plot_errorbar <- function(
   if (!is.null(title)) {
     if (!is.null(x_breaks)) {
       # Calculate midpoint of x-axis for location of favor bar and panel title
-      midpoint <- (min(ana$x2, x_breaks, na.rm = TRUE) + max(ana$x3, x_breaks, na.rm = TRUE)) / 2
-      x_limit <- c(min(ana$x2, x_breaks, na.rm = TRUE), max(ana$x3, x_breaks, na.rm = TRUE))
+      midpoint <- (min(ana$x2, x_breaks, na.rm = TRUE) +
+        max(ana$x3, x_breaks, na.rm = TRUE)) /
+        2
+      x_limit <- c(
+        min(ana$x2, x_breaks, na.rm = TRUE),
+        max(ana$x3, x_breaks, na.rm = TRUE)
+      )
       g <- g +
         ggplot2::scale_x_continuous(
           breaks = unique(c(x_breaks, vline)),
@@ -534,12 +560,23 @@ plot_errorbar <- function(
           limits = x_limit,
           name = favor_bar, # Add favor bar
           # Second x-axis for adding panel title
-          sec.axis = ggplot2::sec_axis(trans = ~., name = "", breaks = midpoint, labels = title)
+          sec.axis = ggplot2::sec_axis(
+            trans = ~.,
+            name = "",
+            breaks = midpoint,
+            labels = title
+          )
         )
     } else {
       x_breaks <- unique(c(pretty(c(ana$x1, ana$x2, ana$x3)), vline))
-      brk_labels <- unique(as.character(c(pretty(c(ana$x1, ana$x2, ana$x3)), vline)))
-      x_limit <- c(min(ana$x2, x_breaks, na.rm = TRUE), max(ana$x3, x_breaks, na.rm = TRUE))
+      brk_labels <- unique(as.character(c(
+        pretty(c(ana$x1, ana$x2, ana$x3)),
+        vline
+      )))
+      x_limit <- c(
+        min(ana$x2, x_breaks, na.rm = TRUE),
+        max(ana$x3, x_breaks, na.rm = TRUE)
+      )
       # Calculate midpoint of x-axis for location of favor bar and panel title
       midpoint <- sum(x_limit) / 2
       g <- g +
@@ -549,18 +586,29 @@ plot_errorbar <- function(
           labels = brk_labels,
           limits = x_limit,
           # Second x-axis for adding panel title
-          sec.axis = ggplot2::sec_axis(trans = ~., name = "", breaks = midpoint, labels = title)
+          sec.axis = ggplot2::sec_axis(
+            trans = ~.,
+            name = "",
+            breaks = midpoint,
+            labels = title
+          )
         )
     }
   } else {
     if (is.null(x_breaks)) {
       x_breaks <- unique(c(pretty(c(ana$x1, ana$x2, ana$x3)), vline))
-      brk_labels <- unique(as.character(c(pretty(c(ana$x1, ana$x2, ana$x3)), vline)))
+      brk_labels <- unique(as.character(c(
+        pretty(c(ana$x1, ana$x2, ana$x3)),
+        vline
+      )))
     } else {
       x_breaks <- unique(c(x_breaks, vline))
       brk_labels <- unique(as.character(c(x_breaks, vline)))
     }
-    x_limit <- c(min(ana$x2, x_breaks, na.rm = TRUE), max(ana$x3, x_breaks, na.rm = TRUE))
+    x_limit <- c(
+      min(ana$x2, x_breaks, na.rm = TRUE),
+      max(ana$x3, x_breaks, na.rm = TRUE)
+    )
     g <- g +
       ggplot2::scale_x_continuous(
         breaks = x_breaks,
@@ -573,12 +621,15 @@ plot_errorbar <- function(
   # Control legend cutoff
   if (!is.null(legend_nrow)) {
     if (legend_nrow > length(label)) {
-      stop("The number of legend rows can't be larger than the number of treatment groups.")
+      stop(
+        "The number of legend rows can't be larger than the number of treatment groups."
+      )
     }
-    g <- g + ggplot2::guides(
-      color = ggplot2::guide_legend(nrow = legend_nrow),
-      shape = ggplot2::guide_legend(nrow = legend_nrow)
-    )
+    g <- g +
+      ggplot2::guides(
+        color = ggplot2::guide_legend(nrow = legend_nrow),
+        shape = ggplot2::guide_legend(nrow = legend_nrow)
+      )
   }
   g + theme
 }
@@ -661,22 +712,25 @@ nudge_unit <- function(n) {
 #' meta_any |>
 #'   table_panel(y_var = "name")
 table_panel <- function(
-    tbl,
-    n_cols = c("n_1", "n_2"),
-    prop_cols = c("prop_1", "prop_2"),
-    y_var,
-    x_label = NULL,
-    text_color = NULL,
-    text_size = 8,
-    text_format_by = "column",
-    background_color = c("#69B8F7", "#FFFFFF"),
-    theme = theme_panel(
-      show_ticks = TRUE,
-      show_text = TRUE
-    ),
-    background_alpha = 0.3) {
+  tbl,
+  n_cols = c("n_1", "n_2"),
+  prop_cols = c("prop_1", "prop_2"),
+  y_var,
+  x_label = NULL,
+  text_color = NULL,
+  text_size = 8,
+  text_format_by = "column",
+  background_color = c("#69B8F7", "#FFFFFF"),
+  theme = theme_panel(
+    show_ticks = TRUE,
+    show_text = TRUE
+  ),
+  background_alpha = 0.3
+) {
   # Check that one variable name is provided as y_var
-  if (length(y_var) > 1) stop("`y_var` should contain only one variable name.")
+  if (length(y_var) > 1) {
+    stop("`y_var` should contain only one variable name.")
+  }
 
   # Check if the length of n and prop columns are same
   if (length(n_cols) != length(prop_cols)) {
@@ -685,7 +739,7 @@ table_panel <- function(
   # Derive combined columns from n and prop columns
   stats <- lapply(
     1:length(n_cols),
-    function (x) {
+    function(x) {
       paste0(tbl[[n_cols[[x]]]], " (", tbl[[prop_cols[[x]]]], ")")
     }
   )
@@ -699,7 +753,9 @@ table_panel <- function(
   # Define variable index
   y_id <- which(names(tbl) %in% y_var)
 
-  if (length(y_id) == 0) stop("`y_var` does not exist in `tbl`.")
+  if (length(y_id) == 0) {
+    stop("`y_var` does not exist in `tbl`.")
+  }
 
   # Define item variable for y-axis label
   item <- tbl[[y_var]]
@@ -714,11 +770,17 @@ table_panel <- function(
   names(tbl) <- paste0("x", 1:ncol(tbl))
 
   # Encode as factor
-  if (!is.factor(item)) item <- factor(item, levels = unique(item))
+  if (!is.factor(item)) {
+    item <- factor(item, levels = unique(item))
+  }
 
   # Define Default Values
-  if (is.null(x_label)) x_label <- names_col
-  if (is.null(text_color)) text_color <- "black"
+  if (is.null(x_label)) {
+    x_label <- names_col
+  }
+  if (is.null(text_color)) {
+    text_color <- "black"
+  }
 
   # Define display order, make the first item display on the top
   item <- factor(item, levels = rev(levels(item)))
@@ -740,7 +802,9 @@ table_panel <- function(
       function(x) {
         row_count <- max(nrow(x[!sum(is.na(x[, 1:n_col])) == n_col, ]), 1)
         x$y <- x$y + rev(nudge_unit(row_count))
-        if (text_format_by == "row") x$p_color <- rep(text_color, length.out = nrow(x))
+        if (text_format_by == "row") {
+          x$p_color <- rep(text_color, length.out = nrow(x))
+        }
         x
       }
     )
@@ -770,7 +834,8 @@ table_panel <- function(
     )
     row.names(ana_long) <- NULL
     ana_1 <- ana_long[!ana_long$time == max(ana_long$time), ]
-    ana_2 <- ana_long[ana_long$time == max(ana_long$time), ] |> unique.data.frame()
+    ana_2 <- ana_long[ana_long$time == max(ana_long$time), ] |>
+      unique.data.frame()
     ana <- rbind(ana_1, ana_2)
 
     ana <- lapply(
@@ -791,7 +856,9 @@ table_panel <- function(
 
   # Define color by column
   if (text_format_by == "column") {
-    if (length(text_color) == 1) text_color <- rep(text_color, n_col)
+    if (length(text_color) == 1) {
+      text_color <- rep(text_color, n_col)
+    }
     ana$p_color <- text_color[ana$time]
   }
 
@@ -812,19 +879,24 @@ table_panel <- function(
   )
 
   # Add value to the table panel
-  g <- g + annotate(
-    "text",
-    x = ana[["time"]],
-    y = ana[["y"]],
-    label = ana[["value"]],
-    color = ana[["p_color"]],
-    size = ana[["p_size"]],
-    na.rm = TRUE
-  )
+  g <- g +
+    annotate(
+      "text",
+      x = ana[["time"]],
+      y = ana[["y"]],
+      label = ana[["value"]],
+      color = ana[["p_color"]],
+      size = ana[["p_size"]],
+      na.rm = TRUE
+    )
 
   # Scale control
   g <- g +
-    scale_x_discrete(limits = factor(1:n_col), labels = x_label, position = "top") +
+    scale_x_discrete(
+      limits = factor(1:n_col),
+      labels = x_label,
+      position = "top"
+    ) +
     scale_y_discrete(limits = levels(ana[["item"]])) +
     xlab(NULL) +
     ylab(NULL)
@@ -862,7 +934,11 @@ theme_panel <- function(show_text = TRUE, show_ticks = TRUE) {
   tick_control <- if (!show_ticks) element_blank() else element_line()
 
   # Control display of breaks
-  text_control <- if (!show_text) element_blank() else element_text(color = "black", face = "bold")
+  text_control <- if (!show_text) {
+    element_blank()
+  } else {
+    element_text(color = "black", face = "bold")
+  }
 
   theme_minimal() +
     theme(
@@ -912,9 +988,10 @@ theme_panel <- function(show_text = TRUE, show_ticks = TRUE) {
 #'   geom_errorbar(aes(y = item, x = effect, xmin = lower, xmax = upper), width = 0.4) +
 #'   scale_y_discrete(name = "", breaks = 1:nrow(df), labels = df$study)
 background_panel <- function(
-    g,
-    background_color = c("#69B8F7", "#FFFFFF"),
-    background_alpha = 0.3) {
+  g,
+  background_color = c("#69B8F7", "#FFFFFF"),
+  background_alpha = 0.3
+) {
   # Get levels' number of item as limits displayed on y-axis
   n <- length(levels(g$data$item))
 

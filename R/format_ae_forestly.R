@@ -61,22 +61,23 @@
 #'   prepare_ae_forestly() |>
 #'   format_ae_forestly()
 format_ae_forestly <- function(
-    outdata,
-    display = c("n", "prop", "fig_prop", "fig_diff"),
-    digits = 1,
-    width_term = 200,
-    width_fig = 320,
-    width_n = 40,
-    width_prop = 60,
-    width_diff = 80,
-    footer_space = 90,
-    prop_range = NULL,
-    diff_range = NULL,
-    color = NULL,
-    ae_col_header = NULL,
-    diff_label = "Treatment <- Favor -> Placebo",
-    diff_col_header = NULL,
-    diff_fig_header = NULL) {
+  outdata,
+  display = c("n", "prop", "fig_prop", "fig_diff"),
+  digits = 1,
+  width_term = 200,
+  width_fig = 320,
+  width_n = 40,
+  width_prop = 60,
+  width_diff = 80,
+  footer_space = 90,
+  prop_range = NULL,
+  diff_range = NULL,
+  color = NULL,
+  ae_col_header = NULL,
+  diff_label = "Treatment <- Favor -> Placebo",
+  diff_col_header = NULL,
+  diff_fig_header = NULL
+) {
   display <- tolower(display)
 
   display <- match.arg(
@@ -120,7 +121,10 @@ format_ae_forestly <- function(
   }
 
   if (is.null(diff_fig_header)) {
-    diff_fig_header <- paste0("Risk Difference (%) + 95% CI <br> vs. ", reference_name)
+    diff_fig_header <- paste0(
+      "Risk Difference (%) + 95% CI <br> vs. ",
+      reference_name
+    )
   }
 
   # Input checking
@@ -128,7 +132,9 @@ format_ae_forestly <- function(
     if (n_group <= 2) {
       color <- c("#00857C", "#66203A")
     } else {
-      if (n_group1 > 3) stop("Please define color to display groups")
+      if (n_group1 > 3) {
+        stop("Please define color to display groups")
+      }
       color <- c("#66203A", rev(c("#00857C", "#6ECEB2", "#BFED33")[1:n_group1]))
     }
   }
@@ -165,9 +171,13 @@ format_ae_forestly <- function(
   if (is.null(prop_range)) {
     fig_prop_range <- round(range(tbl_prop, na.rm = TRUE) + c(-2, 2))
   } else {
-    if (prop_range[1] > range(tbl_prop, na.rm = TRUE)[1] |
-      prop_range[2] < range(tbl_prop, na.rm = TRUE)[2]) {
-      warning("There are data points outside the specified range for proportion.")
+    if (
+      prop_range[1] > range(tbl_prop, na.rm = TRUE)[1] |
+        prop_range[2] < range(tbl_prop, na.rm = TRUE)[2]
+    ) {
+      warning(
+        "There are data points outside the specified range for proportion."
+      )
     }
     fig_prop_range <- prop_range
   }
@@ -211,16 +221,22 @@ format_ae_forestly <- function(
   if (is.null(diff_range)) {
     fig_diff_range <- round(range(tbl_diff, na.rm = TRUE) + c(-2, 2))
   } else {
-    if (diff_range[1] > range(tbl_diff, na.rm = TRUE)[1] |
-      diff_range[2] < range(tbl_diff, na.rm = TRUE)[2]) {
-      warning("There are data points outside the specified range for difference.")
+    if (
+      diff_range[1] > range(tbl_diff, na.rm = TRUE)[1] |
+        diff_range[2] < range(tbl_diff, na.rm = TRUE)[2]
+    ) {
+      warning(
+        "There are data points outside the specified range for difference."
+      )
     }
     fig_diff_range <- diff_range
   }
   fig_diff_color <- fig_prop_color[index_diff]
 
   iter <- 1:ncol(outdata$diff) - 1
-  text <- glue::glue("x[{iter}] + '(' + x_lower[{iter}] + ', ' + x_upper[{iter}] + ')'")
+  text <- glue::glue(
+    "x[{iter}] + '(' + x_lower[{iter}] + ', ' + x_upper[{iter}] + ')'"
+  )
   js_diff_fig_cell <- sparkline_point_js(
     tbl = tbl,
     type = "cell",
@@ -286,11 +302,13 @@ format_ae_forestly <- function(
     ),
     name = reactable::colDef(
       header = ae_col_header,
-      minWidth = width_term, align = "right"
+      minWidth = width_term,
+      align = "right"
     ),
     soc_name = reactable::colDef(
       header = "SOC Name",
-      minWidth = width_term, align = "right",
+      minWidth = width_term,
+      align = "right",
       show = FALSE
     )
   )
@@ -298,8 +316,10 @@ format_ae_forestly <- function(
   # n column format
   col_n <- lapply(name_n, function(x) {
     reactable::colDef(
-      header = "n", defaultSortOrder = "desc",
-      minWidth = width_n, align = "center",
+      header = "n",
+      defaultSortOrder = "desc",
+      minWidth = width_n,
+      align = "center",
       show = display_n
     )
   })
@@ -308,8 +328,10 @@ format_ae_forestly <- function(
   # prop column format
   col_prop <- lapply(name_prop, function(x) {
     reactable::colDef(
-      header = "(%)", defaultSortOrder = "desc",
-      minWidth = width_prop, align = "center",
+      header = "(%)",
+      defaultSortOrder = "desc",
+      minWidth = width_prop,
+      align = "center",
       show = display_prop,
       format = reactable::colFormat(
         prefix = "(",
@@ -350,33 +372,37 @@ format_ae_forestly <- function(
   names(col_ci) <- ci_name
 
   # proportion format
-  col_prop_fig <- list(prop_fig = reactable::colDef(
-    header = "AE Proportion (%)",
-    width = ifelse("fig_prop" %in% display, width_fig, 0),
-    align = "center",
-    sortable = FALSE,
-    filterable = FALSE,
-    cell = reactable::JS(js_prop_fig_cell),
-    footer = reactable::JS(js_prop_fig_footer),
-    html = TRUE,
-    style = "font-size: 0px; padding: 0px; margin: 0px;",
-    footerStyle = "font-size: 0px; padding: 0px; margin: 0px;"
-  ))
+  col_prop_fig <- list(
+    prop_fig = reactable::colDef(
+      header = "AE Proportion (%)",
+      width = ifelse("fig_prop" %in% display, width_fig, 0),
+      align = "center",
+      sortable = FALSE,
+      filterable = FALSE,
+      cell = reactable::JS(js_prop_fig_cell),
+      footer = reactable::JS(js_prop_fig_footer),
+      html = TRUE,
+      style = "font-size: 0px; padding: 0px; margin: 0px;",
+      footerStyle = "font-size: 0px; padding: 0px; margin: 0px;"
+    )
+  )
 
   # difference format
-  col_diff_fig <- list(diff_fig = reactable::colDef(
-    header = diff_fig_header,
-    defaultSortOrder = "desc",
-    width = ifelse("fig_diff" %in% display, width_fig, 0),
-    align = "center",
-    sortable = FALSE,
-    filterable = FALSE,
-    cell = reactable::JS(js_diff_fig_cell),
-    footer = reactable::JS(js_diff_fig_footer),
-    html = TRUE,
-    style = "font-size: 0px; padding: 0px; margin: 0px;",
-    footerStyle = "font-size: 0px; padding: 0px; margin: 0px;"
-  ))
+  col_diff_fig <- list(
+    diff_fig = reactable::colDef(
+      header = diff_fig_header,
+      defaultSortOrder = "desc",
+      width = ifelse("fig_diff" %in% display, width_fig, 0),
+      align = "center",
+      sortable = FALSE,
+      filterable = FALSE,
+      cell = reactable::JS(js_diff_fig_cell),
+      footer = reactable::JS(js_diff_fig_footer),
+      html = TRUE,
+      style = "font-size: 0px; padding: 0px; margin: 0px;",
+      footerStyle = "font-size: 0px; padding: 0px; margin: 0px;"
+    )
+  )
 
   # Format variables for slider bar
   col_sider <- list(
@@ -386,9 +412,14 @@ format_ae_forestly <- function(
 
   # Combine column definition
   columns <- c(
-    col_var, col_n, col_prop,
-    col_diff, col_ci, col_sider,
-    col_prop_fig, col_diff_fig
+    col_var,
+    col_n,
+    col_prop,
+    col_diff,
+    col_ci,
+    col_sider,
+    col_prop_fig,
+    col_diff_fig
   )
 
   # column hidden
@@ -399,9 +430,12 @@ format_ae_forestly <- function(
     return(x)
   })
 
-  hidden_item <- names(columns)[(!names(columns) %in% "soc_name") & (sapply(columns, function(x) {
-    return(!x$show)
-  }))]
+  hidden_item <- names(columns)[
+    (!names(columns) %in% "soc_name") &
+      (sapply(columns, function(x) {
+        return(!x$show)
+      }))
+  ]
 
   # Create outdata
   outdata$tbl <- tbl

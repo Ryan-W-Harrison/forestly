@@ -93,27 +93,28 @@
 #'   p
 #' ))
 sparkline_point_js <- function(
-    tbl,
-    x,
-    type = c("cell", "footer", "header"),
-    x_lower = NULL,
-    x_upper = x_lower,
-    xlim = NULL,
-    xlab = "",
-    y = seq_along(x),
-    vline = NULL,
-    text = NULL,
-    height = 30,
-    width = 150,
-    color = "gold",
-    color_errorbar = color,
-    color_vline = "#00000050",
-    legend = FALSE,
-    legend_label = NULL,
-    legend_title = "",
-    legend_position = 0,
-    legend_type = c("point", "line", "point+line"),
-    margin = rep(0, 5)) {
+  tbl,
+  x,
+  type = c("cell", "footer", "header"),
+  x_lower = NULL,
+  x_upper = x_lower,
+  xlim = NULL,
+  xlab = "",
+  y = seq_along(x),
+  vline = NULL,
+  text = NULL,
+  height = 30,
+  width = 150,
+  color = "gold",
+  color_errorbar = color,
+  color_vline = "#00000050",
+  legend = FALSE,
+  legend_label = NULL,
+  legend_title = "",
+  legend_position = 0,
+  legend_type = c("point", "line", "point+line"),
+  margin = rep(0, 5)
+) {
   # Input Checking
   stopifnot(x %in% names(tbl))
 
@@ -197,7 +198,9 @@ sparkline_point_js <- function(
   }
 
   # Convert v_line
-  if (is.null(vline)) vline <- "[]"
+  if (is.null(vline)) {
+    vline <- "[]"
+  }
   js_vline <- as.character(vline)
 
   # Convert shape
@@ -208,7 +211,10 @@ sparkline_point_js <- function(
   foo <- function(x) {
     rgba <- grDevices::col2rgb(x, alpha = TRUE)
     rgba[4, ] <- rgba[4, ] / 255
-    paste(paste0('"rgba(', apply(rgba, 2, paste, collapse = ", "), ')"'), collapse = ", ")
+    paste(
+      paste0('"rgba(', apply(rgba, 2, paste, collapse = ", "), ')"'),
+      collapse = ", "
+    )
   }
   js_color <- foo(color)
   js_color_errorbar <- foo(color_errorbar)
@@ -265,8 +271,15 @@ sparkline_point_js <- function(
     }
   }'
 
-    template <- gsub("<%=js_legend_type%>", js_legend_type, template, fixed = TRUE)
-    js <- lapply(1:n - 1, function(x) gsub("[i]", paste0("[", x, "]"), template, fixed = TRUE))
+    template <- gsub(
+      "<%=js_legend_type%>",
+      js_legend_type,
+      template,
+      fixed = TRUE
+    )
+    js <- lapply(1:n - 1, function(x) {
+      gsub("[i]", paste0("[", x, "]"), template, fixed = TRUE)
+    })
     js <- paste(js, collapse = ",")
   }
 

@@ -40,20 +40,30 @@
 #' ) |>
 #'   prepare_ae_forestly()
 prepare_ae_forestly <- function(
-    meta,
-    population = NULL,
-    observation = NULL,
-    parameter = NULL,
-    components = "par",
-    reference_group = NULL,
-    ae_listing_display = c(
-      "USUBJID", "SITEID", "SEX", "RACE", "AGE", "ASTDY", "AESER",
-      "AEREL", "AEACN", "AEOUT", "ADURN", "ADURU"
-    ),
-    ae_listing_unique = FALSE,
-    bisection = 1e2,
-    ...
-    ) {
+  meta,
+  population = NULL,
+  observation = NULL,
+  parameter = NULL,
+  components = "par",
+  reference_group = NULL,
+  ae_listing_display = c(
+    "USUBJID",
+    "SITEID",
+    "SEX",
+    "RACE",
+    "AGE",
+    "ASTDY",
+    "AESER",
+    "AEREL",
+    "AEACN",
+    "AEOUT",
+    "ADURN",
+    "ADURU"
+  ),
+  ae_listing_unique = FALSE,
+  bisection = 1e2,
+  ...
+) {
   if (is.null(population)) {
     if (length(meta$population) == 1) {
       population <- meta$population[[1]]$name
@@ -78,14 +88,18 @@ prepare_ae_forestly <- function(
       all.x = TRUE,
       suffixes = c("", ".pop")
     )
-  meta$data_observation <- data_observation[, !grepl("\\.pop$", names(data_observation))]
+  meta$data_observation <- data_observation[,
+    !grepl("\\.pop$", names(data_observation))
+  ]
 
   if (any(!ae_listing_display %in% names(meta$data_observation))) {
     warning(paste0(
       "The variables specified in ae_listing_display should be included in the input dataset. ",
       "Only the variables included in the input dataset will be displayed on AE listing table."
-      ))
-    ae_listing_display <- ae_listing_display[ae_listing_display %in% names(meta$data_observation)]
+    ))
+    ae_listing_display <- ae_listing_display[
+      ae_listing_display %in% names(meta$data_observation)
+    ]
   }
 
   if (is.null(parameter)) {
@@ -121,8 +135,10 @@ prepare_ae_forestly <- function(
 
   res <- lapply(parameters, function(x) {
     # print(x)
-    metalite.ae::prepare_ae_specific(meta,
-      population = population, observation = observation,
+    metalite.ae::prepare_ae_specific(
+      meta,
+      population = population,
+      observation = observation,
       parameter = x,
       components = components,
       reference_group = reference_group
@@ -171,7 +187,11 @@ prepare_ae_forestly <- function(
   name <- name <- c("order", "name", "soc_name")
   info <- lapply(name, foo)
   names(info) <- name
-  parameter_order <- unlist(Map(rep, x = parameters, each = attributes(info$order)$n))
+  parameter_order <- unlist(Map(
+    rep,
+    x = parameters,
+    each = attributes(info$order)$n
+  ))
   names(parameter_order) <- NULL
   parameter_order <- factor(parameter_order, levels = parameters)
 

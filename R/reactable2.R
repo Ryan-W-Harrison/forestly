@@ -61,27 +61,28 @@
 #' @examples
 #' reactable2(iris)
 reactable2 <- function(
-    data,
-    resizable = TRUE,
-    filterable = TRUE,
-    searchable = TRUE,
-    defaultPageSize = 10,
-    showPageSizeOptions = TRUE,
-    borderless = TRUE,
-    striped = TRUE,
-    highlight = TRUE,
-    fullWidth = TRUE,
-    width = 1200,
-    theme = reactable::reactableTheme(cellPadding = "0px 8px"),
-    label = TRUE,
-    wrap = FALSE,
-    download = TRUE,
-    col_def = NULL,
-    soc_toggle = TRUE,
-    diff_toggle = FALSE,
-    hidden_item = NULL,
-    diff_columns = NULL,
-    ...) {
+  data,
+  resizable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE,
+  defaultPageSize = 10,
+  showPageSizeOptions = TRUE,
+  borderless = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  fullWidth = TRUE,
+  width = 1200,
+  theme = reactable::reactableTheme(cellPadding = "0px 8px"),
+  label = TRUE,
+  wrap = FALSE,
+  download = TRUE,
+  col_def = NULL,
+  soc_toggle = TRUE,
+  diff_toggle = FALSE,
+  hidden_item = NULL,
+  diff_columns = NULL,
+  ...
+) {
   # Display variable label as hover text
   if (label & is.null(col_def)) {
     label <- get_label(data)
@@ -120,50 +121,68 @@ reactable2 <- function(
     on_click_soc <- paste0(
       "function control_soc(hidden_columns) {",
       "  if (hidden_columns.includes('soc_name')) {",
-      "    Reactable.setHiddenColumns('", element_id, "', prevColumns => {
+      "    Reactable.setHiddenColumns('",
+      element_id,
+      "', prevColumns => {
                              return prevColumns.filter(col => col !== 'soc_name')})",
       "  } else {",
-      "    Reactable.setHiddenColumns('", element_id, "', prevColumns => {
+      "    Reactable.setHiddenColumns('",
+      element_id,
+      "', prevColumns => {
                              return [...prevColumns, 'soc_name']})",
       "  }",
       "}",
-      "control_soc(Reactable.getState('", element_id, "').hiddenColumns);"
+      "control_soc(Reactable.getState('",
+      element_id,
+      "').hiddenColumns);"
     )
 
-    buttons <- c(buttons, list(
-      htmltools::tags$button(
-        "Show/Hide SOC column",
-        onclick = on_click_soc
+    buttons <- c(
+      buttons,
+      list(
+        htmltools::tags$button(
+          "Show/Hide SOC column",
+          onclick = on_click_soc
+        )
       )
-    ))
+    )
   }
 
   if (diff_toggle && !is.null(diff_columns) && length(diff_columns) > 0) {
     diff_cols_js <- paste0("['", paste(diff_columns, collapse = "', '"), "']")
     on_click_diff <- paste0(
       "function control_diff(hidden_columns) {",
-      "  const diffCols = ", diff_cols_js, ";",
+      "  const diffCols = ",
+      diff_cols_js,
+      ";",
       "  const allDiffHidden = diffCols.every(col => hidden_columns.includes(col));",
       "  if (allDiffHidden) {",
-      "    Reactable.setHiddenColumns('", element_id, "', prevColumns => {
+      "    Reactable.setHiddenColumns('",
+      element_id,
+      "', prevColumns => {
                              return prevColumns.filter(col => !diffCols.includes(col))})",
       "  } else {",
-      "    Reactable.setHiddenColumns('", element_id, "', prevColumns => {
+      "    Reactable.setHiddenColumns('",
+      element_id,
+      "', prevColumns => {
                              return [...new Set([...prevColumns, ...diffCols])]})",
       "  }",
       "}",
-      "control_diff(Reactable.getState('", element_id, "').hiddenColumns);"
+      "control_diff(Reactable.getState('",
+      element_id,
+      "').hiddenColumns);"
     )
 
-    buttons <- c(buttons, list(
-      htmltools::tags$button(
-        "Show/Hide Risk Difference",
-        onclick = on_click_diff
+    buttons <- c(
+      buttons,
+      list(
+        htmltools::tags$button(
+          "Show/Hide Risk Difference",
+          onclick = on_click_diff
+        )
       )
-    ))
+    )
   }
-
-
 
   if (length(buttons) > 0) {
     tbl <- htmltools::tagList(
@@ -187,13 +206,17 @@ reactable2 <- function(
 }
 
 get_label <- function(data) {
-  label <- vapply(data, function(x) {
-    if (is.null(attr(x, "label"))) {
-      return(NA_character_)
-    } else {
-      attr(x, "label")
-    }
-  }, FUN.VALUE = character(1))
+  label <- vapply(
+    data,
+    function(x) {
+      if (is.null(attr(x, "label"))) {
+        return(NA_character_)
+      } else {
+        attr(x, "label")
+      }
+    },
+    FUN.VALUE = character(1)
+  )
 
   ifelse(is.na(label), names(data), label)
 }

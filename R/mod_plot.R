@@ -17,7 +17,10 @@ mod_plot_server <- function(id, data, mapping) {
 
       shiny::validate(
         shiny::need(!is.null(df), "Upload a dataset first."),
-        shiny::need(length(map$parameters) > 0, "Select at least one AE criteria.")
+        shiny::need(
+          length(map$parameters) > 0,
+          "Select at least one AE criteria."
+        )
       )
 
       tryCatch(
@@ -34,7 +37,10 @@ mod_plot_server <- function(id, data, mapping) {
     })
 
     output$forest_plot <- shiny::renderUI({
-      shiny::validate(shiny::need(input$build > 0, "Map variables, then generate a plot."))
+      shiny::validate(shiny::need(
+        input$build > 0,
+        "Map variables, then generate a plot."
+      ))
       plot_object()
     })
   })

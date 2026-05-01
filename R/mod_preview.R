@@ -11,7 +11,10 @@ mod_preview_server <- function(id, data) {
   shiny::moduleServer(id, function(input, output, session) {
     output$summary <- shiny::renderUI({
       df <- data()
-      shiny::validate(shiny::need(!is.null(df), "Upload a dataset to preview it."))
+      shiny::validate(shiny::need(
+        !is.null(df),
+        "Upload a dataset to preview it."
+      ))
 
       htmltools::tags$p(
         class = "text-muted",
@@ -19,10 +22,15 @@ mod_preview_server <- function(id, data) {
       )
     })
 
-    output$table <- shiny::renderTable({
-      df <- data()
-      shiny::validate(shiny::need(!is.null(df), ""))
-      utils::head(df, 10)
-    }, striped = TRUE, bordered = TRUE, spacing = "s")
+    output$table <- shiny::renderTable(
+      {
+        df <- data()
+        shiny::validate(shiny::need(!is.null(df), ""))
+        utils::head(df, 10)
+      },
+      striped = TRUE,
+      bordered = TRUE,
+      spacing = "s"
+    )
   })
 }

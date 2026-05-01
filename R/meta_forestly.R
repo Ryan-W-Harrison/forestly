@@ -42,24 +42,27 @@
 #'   parameter_term = "any;rel"
 #' )
 meta_forestly <- function(
-    dataset_adsl,
-    dataset_adae,
-    population_term = "apat",
-    observation_term = "safety",
-    parameter_term = "any;rel",
-    population_subset,
-    observation_subset,
-    treatment_group = "TRTA") {
+  dataset_adsl,
+  dataset_adae,
+  population_term = "apat",
+  observation_term = "safety",
+  parameter_term = "any;rel",
+  population_subset,
+  observation_subset,
+  treatment_group = "TRTA"
+) {
   meta <- metalite::meta_adam(
     population = as.data.frame(dataset_adsl),
     observation = as.data.frame(dataset_adae)
   ) |>
-    metalite::define_plan(plan = metalite::plan(
-      analysis = "ae_forestly",
-      population = population_term,
-      observation = observation_term,
-      parameter = parameter_term
-    )) |>
+    metalite::define_plan(
+      plan = metalite::plan(
+        analysis = "ae_forestly",
+        population = population_term,
+        observation = observation_term,
+        parameter = parameter_term
+      )
+    ) |>
     metalite::define_population(
       name = population_term,
       group = treatment_group,
