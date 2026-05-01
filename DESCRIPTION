@@ -30,6 +30,7 @@ Imports:
     arrow,
     bslib,
     brew,
+    config,
     crosstalk,
     dplyr,
     glue,

@@ -22,7 +22,8 @@ utils::globalVariables(
       # From `plot_dot()`
       c(".data"),
       # From `plot_errorbar()`
-      c(".data", "x1", "x2", "x3", "y")
+      c(".data", "x1", "x2", "x3", "y"),
+      c("AESER", "AEREL", "forestly_adae_3grp")
     )
   )
 )
